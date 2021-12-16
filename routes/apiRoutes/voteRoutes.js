@@ -4,6 +4,7 @@ const router = express.Router();
 const db = require('../../db/connection');
 const inputCheck = require('../../db/utils/inputCheck');
 
+// GET  the total votes for all the candidates
 router.get('/votes', (req, res) => {
     const sql = `SELECT candidates.*, parties.name AS party_name, COUNT(candidate_id) AS count
     FROM votes
@@ -13,16 +14,17 @@ router.get('/votes', (req, res) => {
 
     db.query(sql, (err, rows) => {
         if (err) {
-            res.json(500).json({ error: err.message });
+            res.status(500).json({ error: err.message });
             return;
         }
         res.json({
             message: 'success',
             data: rows
-        })
-    })
-})
+        });
+    });
+});
 
+// CREATE a vote record
 router.post('/vote', ({ body }, res) => {
     // DATA validation
     const errors = inputCheck(body, 'voter_id', 'candidate_id');
